@@ -36,13 +36,13 @@ module.exports = (app) => {
 
     // Criação de produto onde o payload será o json informado acima (exceto as propriedades isMarketable e inventory.quantity)
     app.post('/', (req, res, next) => {
-        model.find({ sku: req.body.sku }).then(response => {
-            if (response.length !== 0) {
-                res.status(500).send({ message: "SKU já cadastrado" });
-            } else
+        model.findOne({ sku: req.body.sku }).then(response => {
+            if (!response)
                 model.create(req.body).then(response => {
                     res.status(201).send({ message: "Produto Cadastrado", data: response });
                 })
+            else
+                res.status(500).send({ message: "SKU já cadastrado" });
         }).catch(err => {
             res.status(500).send({ message: err });
         })
@@ -64,13 +64,14 @@ module.exports = (app) => {
 
     // Deleção de produto por sku
     app.delete('/:sku', (req, res, next) => {
-        model.findOne({ sku: req.body.sku }).then(response => {
-            if (response.length !== 0)
+        model.findOne({ sku: req.params.sku }).then(response => {
+            if (!response)
+                res.status(200).send({ message: "Produto não encontrado" });
+            else
                 model.deleteOne({ sku: req.params.sku }).then(response => {
                     res.status(200).send({ message: "Produto deletado" });
                 })
-            else
-                res.status(200).send({ message: "Produto não encontrado" });
+
         }).catch(err => {
             res.status(500).send({ message: err });
         })
