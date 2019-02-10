@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const { Schema } = mongoose
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 const warehouseSchema = mongoose.Schema({
     "locality": String,
@@ -12,9 +12,9 @@ const inventorySchema = mongoose.Schema({
 }, { _id: false });
 
 const prodSchema = new Schema({
-    sku: Number,
-    name: String,
+    sku: { type: Number, required: true },
+    name: { type: String, required: true },
     inventory: inventorySchema,
 })
 
-mongoose.model('produtos', prodSchema)
+mongoose.model('produtos', prodSchema);
